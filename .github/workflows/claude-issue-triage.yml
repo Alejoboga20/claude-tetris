@@ -54,20 +54,38 @@ jobs:
                Apply your chosen label(s) with
                `gh issue edit ${{ github.event.issue.number }} --add-label "..."`.
             4. Post ONE diagnostic comment with
-               `gh issue comment ${{ github.event.issue.number }} --body "..."`
-               using this structure (translate the section headers and body into
-               the same language the issue was written in):
+               `gh issue comment ${{ github.event.issue.number }} --body "..."`.
+               Write the body as GitHub-flavored Markdown so it renders with
+               real headings, bullets, and code spans (not just bold labels).
+               Use this structure (translate headings and body into the same
+               language the issue was written in; keep file/function names
+               and code spans verbatim):
 
                <!-- claude-triage -->
-               **Resumen** — one-line restatement of the issue
-               **Tipo** — bug / mejora / pregunta / no está claro
-               **Diagnóstico** — likely cause, with file:line references into
-               game.js where you can identify one; if you can't reproduce a
-               root cause from the description alone, say so plainly
-               **Información faltante** — what the reporter still needs to
-               provide (repro steps, browser, screenshot, expected vs actual),
-               omit this section if the report is already complete
-               **Etiquetas aplicadas** — the labels you applied
+               ## Resumen
+
+               One-line restatement of the issue.
+
+               ## Tipo
+
+               One of: `bug`, `mejora`, `pregunta`, `no está claro`.
+
+               ## Diagnóstico
+
+               Likely cause, as prose or a short bullet list. Reference
+               concrete locations with inline code spans, e.g. `game.js:120`
+               or `` `tryRotate` ``. If a root cause can't be pinned down from
+               the description alone, say so plainly instead of guessing.
+
+               ## Información faltante
+
+               Bullet list of what the reporter still needs to provide
+               (repro steps, browser, screenshot, expected vs actual). Omit
+               this whole section if the report is already complete.
+
+               ## Etiquetas aplicadas
+
+               Bullet list of the labels applied, each as `` `label-name` ``.
 
             5. This issue may already have a prior triage comment (look for the
                `<!-- claude-triage -->` marker in the comments you fetched in
