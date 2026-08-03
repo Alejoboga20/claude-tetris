@@ -55,35 +55,35 @@ jobs:
                `gh issue edit ${{ github.event.issue.number }} --add-label "..."`.
             4. Post ONE diagnostic comment with
                `gh issue comment ${{ github.event.issue.number }} --body "..."`.
-               Write the body as GitHub-flavored Markdown so it renders with
-               real headings, bullets, and code spans (not just bold labels).
-               Use this structure (translate headings and body into the same
-               language the issue was written in; keep file/function names
-               and code spans verbatim):
+               Always write the comment in English, regardless of the
+               language the issue itself is written in. Write the body as
+               GitHub-flavored Markdown so it renders with real headings,
+               bullets, and code spans (not just bold labels). Use this
+               structure (keep file/function names and code spans verbatim):
 
                <!-- claude-triage -->
-               ## Resumen
+               ## Summary
 
                One-line restatement of the issue.
 
-               ## Tipo
+               ## Type
 
-               One of: `bug`, `mejora`, `pregunta`, `no está claro`.
+               One of: `bug`, `enhancement`, `question`, `unclear`.
 
-               ## Diagnóstico
+               ## Diagnosis
 
                Likely cause, as prose or a short bullet list. Reference
                concrete locations with inline code spans, e.g. `game.js:120`
                or `` `tryRotate` ``. If a root cause can't be pinned down from
                the description alone, say so plainly instead of guessing.
 
-               ## Información faltante
+               ## Missing information
 
                Bullet list of what the reporter still needs to provide
                (repro steps, browser, screenshot, expected vs actual). Omit
                this whole section if the report is already complete.
 
-               ## Etiquetas aplicadas
+               ## Labels applied
 
                Bullet list of the labels applied, each as `` `label-name` ``.
 
