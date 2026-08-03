@@ -1,0 +1,82 @@
+name: Claude Issue Triage
+
+on:
+  issues:
+    types: [opened, edited]
+
+concurrency:
+  group: claude-issue-triage-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  triage:
+    if: |
+      github.event.issue.pull_request == null &&
+      github.event.issue.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude issue triage
+        id: claude-triage
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh issue edit:*),Bash(gh issue comment:*),Bash(gh label list:*),Read,Glob,Grep"'
+          prompt: |
+            Triage issue #${{ github.event.issue.number }} in ${{ github.repository }}.
+
+            Repo: classic Tetris in vanilla JS/HTML5 Canvas/CSS, no build step.
+            All game logic lives in game.js (~300 lines). Board model, piece
+            rotation (rotateCW), collision (collide), wall kicks (tryRotate),
+            line clearing (clearLines), scoring, and level/speed constants are
+            all there. index.html is the DOM shell, style.css the look.
+            README and in-game UI text are in Spanish.
+
+            Steps:
+            1. Run `gh issue view ${{ github.event.issue.number }} --json title,body,author,comments`
+               to read the issue.
+            2. Read game.js, index.html, style.css, and CLAUDE.md to ground your
+               analysis in the actual code. If the report describes a bug, try to
+               pin down the responsible function and cite file:line.
+            3. Run `gh label list` and choose labels ONLY from that existing set
+               (bug, documentation, duplicate, enhancement, good first issue,
+               help wanted, invalid, question, wontfix). Never create new labels.
+               Apply your chosen label(s) with
+               `gh issue edit ${{ github.event.issue.number }} --add-label "..."`.
+            4. Post ONE diagnostic comment with
+               `gh issue comment ${{ github.event.issue.number }} --body "..."`
+               using this structure (translate the section headers and body into
+               the same language the issue was written in):
+
+               <!-- claude-triage -->
+               **Resumen** — one-line restatement of the issue
+               **Tipo** — bug / mejora / pregunta / no está claro
+               **Diagnóstico** — likely cause, with file:line references into
+               game.js where you can identify one; if you can't reproduce a
+               root cause from the description alone, say so plainly
+               **Información faltante** — what the reporter still needs to
+               provide (repro steps, browser, screenshot, expected vs actual),
+               omit this section if the report is already complete
+               **Etiquetas aplicadas** — the labels you applied
+
+            5. This issue may already have a prior triage comment (look for the
+               `<!-- claude-triage -->` marker in the comments you fetched in
+               step 1 — this happens on `edited` events, when the issue body
+               changed after an earlier triage run). If one exists, update it
+               in place with
+               `gh issue comment ${{ github.event.issue.number }} --edit-last --body "..."`
+               instead of posting a new comment.
+
+            Do not post more than one comment. Do not remove existing labels
+            that other humans applied unless they are clearly wrong for the
+            current issue content.
