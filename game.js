@@ -136,6 +136,7 @@ function softDrop() {
 }
 
 function lockPiece() {
+  if (gameOver) return;
   merge();
   clearLines();
   spawn();
@@ -146,6 +147,7 @@ function spawn() {
   next = randomPiece();
   if (collide(current.shape, current.x, current.y)) {
     endGame();
+    return;
   }
   drawNext();
 }
@@ -221,8 +223,10 @@ function drawNext() {
 function endGame() {
   gameOver = true;
   cancelAnimationFrame(animId);
+  animId = null;
   overlayTitle.textContent = 'GAME OVER';
   overlayScore.textContent = `Puntuación: ${score.toLocaleString()}`;
+  overlay.classList.add('game-over');
   overlay.classList.remove('hidden');
 }
 
@@ -236,11 +240,13 @@ function togglePause() {
     cancelAnimationFrame(animId);
     overlayTitle.textContent = 'PAUSA';
     overlayScore.textContent = '';
+    overlay.classList.remove('game-over');
     overlay.classList.remove('hidden');
   }
 }
 
 function loop(ts) {
+  if (gameOver || paused) return;
   const dt = ts - lastTime;
   lastTime = ts;
   dropAccum += dt;
@@ -269,9 +275,10 @@ function init() {
   next = randomPiece();
   spawn();
   updateHUD();
+  overlay.classList.remove('game-over');
   overlay.classList.add('hidden');
   cancelAnimationFrame(animId);
-  animId = requestAnimationFrame(loop);
+  if (!gameOver) animId = requestAnimationFrame(loop);
 }
 
 document.addEventListener('keydown', e => {

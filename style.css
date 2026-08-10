@@ -121,6 +121,11 @@ kbd {
   display: none;
 }
 
+.overlay.game-over {
+  background: #0f0f17;
+  backdrop-filter: none;
+}
+
 .overlay-box {
   text-align: center;
   display: flex;
