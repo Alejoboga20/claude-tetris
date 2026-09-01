@@ -106,6 +106,36 @@
         <button id="overlay-reset-btn" class="btn-secondary">Resetear records</button>
       </div>
     </div>
+
+    <div id="pause-menu" class="overlay hidden">
+      <div class="overlay-box pause-box">
+        <div id="pause-main-view" class="pause-view">
+          <p class="pause-title">PAUSA</p>
+
+          <div class="pause-level-select">
+            <label for="start-level-range">NIVEL INICIAL</label>
+            <input type="range" id="start-level-range" min="1" max="10" step="1" value="1" />
+            <span id="start-level-value">1</span>
+          </div>
+
+          <button id="resume-btn" class="pause-btn">Reanudar</button>
+          <button id="pause-restart-btn" class="pause-btn">Reiniciar</button>
+          <button id="show-controls-btn" class="pause-btn secondary">Ver controles</button>
+        </div>
+
+        <div id="pause-controls-view" class="pause-view hidden">
+          <p class="pause-title">CONTROLES</p>
+          <ul class="pause-controls-list">
+            <li><kbd>←</kbd><kbd>→</kbd> mover</li>
+            <li><kbd>↑</kbd> / <kbd>X</kbd> rotar</li>
+            <li><kbd>↓</kbd> bajar</li>
+            <li><kbd>Space</kbd> caída</li>
+            <li><kbd>P</kbd> / <kbd>Esc</kbd> pausa</li>
+          </ul>
+          <button id="back-to-pause-btn" class="pause-btn secondary">Volver</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="game.js"></script>

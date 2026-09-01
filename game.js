@@ -175,7 +175,19 @@ const MAX_RECORDS = 5;
 
 const themeSelect = document.getElementById('theme-select');
 
-let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
+const pauseMenu = document.getElementById('pause-menu');
+const pauseMainView = document.getElementById('pause-main-view');
+const pauseControlsView = document.getElementById('pause-controls-view');
+const resumeBtn = document.getElementById('resume-btn');
+const pauseRestartBtn = document.getElementById('pause-restart-btn');
+const showControlsBtn = document.getElementById('show-controls-btn');
+const backToPauseBtn = document.getElementById('back-to-pause-btn');
+const startLevelRange = document.getElementById('start-level-range');
+const startLevelValue = document.getElementById('start-level-value');
+
+const START_LEVEL_KEY = 'tetris.startLevel';
+
+let board, current, next, score, lines, level, startLevel, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
 let combo, bestCombo, maxLines, gameStarted;
 
 /* ---- Records (localStorage) ---- */
@@ -332,7 +344,7 @@ function clearLines() {
     maxLines = Math.max(maxLines, cleared);
     lines += cleared;
     score += (LINE_SCORES[cleared] || 0) * level;
-    level = Math.floor(lines / 10) + 1;
+    level = Math.max(startLevel, Math.floor(lines / 10) + 1);
     dropInterval = Math.max(100, 1000 - (level - 1) * 90);
     updateHUD();
   } else {
@@ -511,18 +523,45 @@ function endGame() {
   }
 }
 
+function safeGetItem(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function safeSetItem(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Storage unavailable (private browsing, file:// origin, quota, etc.) — ignore.
+  }
+}
+
+function getStoredStartLevel() {
+  const raw = safeGetItem(START_LEVEL_KEY);
+  const n = parseInt(raw, 10);
+  if (!Number.isFinite(n) || n < 1 || n > 10) return 1;
+  return n;
+}
+
+function showPauseMainView() {
+  pauseControlsView.classList.add('hidden');
+  pauseMainView.classList.remove('hidden');
+}
+
 function togglePause() {
   if (!gameStarted || gameOver) return;
   paused = !paused;
+  showPauseMainView();
   if (!paused) {
+    pauseMenu.classList.add('hidden');
     lastTime = performance.now();
     loop(lastTime);
   } else {
     cancelAnimationFrame(animId);
-    overlayTitle.textContent = 'PAUSA';
-    overlayScore.textContent = '';
-    overlay.classList.remove('game-over');
-    overlay.classList.remove('hidden');
+    pauseMenu.classList.remove('hidden');
   }
 }
 
@@ -547,10 +586,11 @@ function init() {
   board = createBoard();
   score = 0;
   lines = 0;
-  level = 1;
+  startLevel = getStoredStartLevel();
+  level = startLevel;
   paused = false;
   gameOver = false;
-  dropInterval = 1000;
+  dropInterval = Math.max(100, 1000 - (level - 1) * 90);
   dropAccum = 0;
   combo = 0;
   bestCombo = 0;
@@ -564,6 +604,8 @@ function init() {
   saveRecordSection.classList.add('hidden');
   overlay.classList.remove('game-over');
   overlay.classList.add('hidden');
+  pauseMenu.classList.add('hidden');
+  showPauseMainView();
   cancelAnimationFrame(animId);
   if (!gameOver) animId = requestAnimationFrame(loop);
 }
@@ -571,7 +613,7 @@ function init() {
 document.addEventListener('keydown', e => {
   if (!gameStarted) return;
   if (e.target === themeSelect) return; // no interferir con el selector de tema
-  if (e.code === 'KeyP') { togglePause(); return; }
+  if (e.code === 'KeyP' || e.code === 'Escape') { togglePause(); return; }
   if (paused || gameOver) return;
   switch (e.code) {
     case 'ArrowLeft':
@@ -624,5 +666,20 @@ populateThemeSelect();
 themeSelect.value = theme;
 applyThemeBodyClass();
 themeSelect.addEventListener('change', e => setTheme(e.target.value));
+
+resumeBtn.addEventListener('click', togglePause);
+pauseRestartBtn.addEventListener('click', init);
+showControlsBtn.addEventListener('click', () => {
+  pauseMainView.classList.add('hidden');
+  pauseControlsView.classList.remove('hidden');
+});
+backToPauseBtn.addEventListener('click', showPauseMainView);
+
+startLevelRange.value = getStoredStartLevel();
+startLevelValue.textContent = startLevelRange.value;
+startLevelRange.addEventListener('input', () => {
+  startLevelValue.textContent = startLevelRange.value;
+  safeSetItem(START_LEVEL_KEY, startLevelRange.value);
+});
 
 renderStartScreen();

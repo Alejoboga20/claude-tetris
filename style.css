@@ -263,6 +263,38 @@ kbd {
   width: 100%;
 }
 
+/* ---- Menú de pausa ---- */
+.pause-box {
+  min-width: 220px;
+}
+
+.pause-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+}
+
+.pause-view.hidden {
+  display: none;
+}
+
+.pause-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #7aa2f7;
+}
+
+.pause-level-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
 .records-table {
   width: 100%;
   border-collapse: collapse;
@@ -336,4 +368,69 @@ kbd {
 #name-input:focus {
   outline: none;
   border-color: #7aa2f7;
+}
+
+.pause-level-select label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #555570;
+  font-weight: 600;
+}
+
+.pause-level-select input[type="range"] {
+  width: 160px;
+  accent-color: #7aa2f7;
+}
+
+#start-level-value {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: #7aa2f7;
+}
+
+.pause-btn {
+  width: 180px;
+  background: #7aa2f7;
+  color: #0f0f17;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.pause-btn:hover {
+  background: #9bbdff;
+}
+
+.pause-btn.secondary {
+  background: transparent;
+  border: 1px solid #3a3a5a;
+  color: #aaa;
+}
+
+.pause-btn.secondary:hover {
+  background: #22223a;
+  color: #e0e0e0;
+}
+
+.pause-controls-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.pause-controls-list li {
+  font-size: 13px;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
