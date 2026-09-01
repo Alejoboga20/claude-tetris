@@ -5,7 +5,10 @@
 }
 
 body {
-  background: #0f0f17;
+  --bg-body: #0f0f17;
+  --bg-board: #1a1a25;
+  --border-board: #2a2a3a;
+  background: var(--bg-body);
   color: #e0e0e0;
   font-family: system-ui, -apple-system, sans-serif;
   display: flex;
@@ -13,6 +16,26 @@ body {
   justify-content: center;
   min-height: 100vh;
   user-select: none;
+  transition: background 0.2s;
+}
+
+/* ---- Temas ---- */
+body.theme-neon {
+  --bg-body: #000000;
+  --bg-board: #05050a;
+  --border-board: #00e5ff;
+}
+
+body.theme-pastel {
+  --bg-body: #1f1a24;
+  --bg-board: #26202c;
+  --border-board: #4a3f52;
+}
+
+body.theme-pixel {
+  --bg-body: #14141c;
+  --bg-board: #1c1c14;
+  --border-board: #3a3a2a;
 }
 
 .wrapper {
@@ -36,10 +59,11 @@ body {
 
 #board {
   display: block;
-  border: 1px solid #2a2a3a;
-  background: #1a1a25;
+  border: 1px solid var(--border-board);
+  background: var(--bg-board);
   border-radius: 4px;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+  transition: border-color 0.2s, background 0.2s;
 }
 
 /* ---- Panel lateral ---- */
@@ -74,9 +98,28 @@ body {
 
 #next-canvas {
   display: block;
-  border: 1px solid #2a2a3a;
-  background: #1a1a25;
+  border: 1px solid var(--border-board);
+  background: var(--bg-board);
   border-radius: 4px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+/* ---- Selector de tema ---- */
+#theme-select {
+  background: #22223a;
+  color: #e0e0e0;
+  border: 1px solid #3a3a5a;
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+#theme-select:hover,
+#theme-select:focus {
+  border-color: #7aa2f7;
+  outline: none;
 }
 
 /* ---- Controles ---- */
@@ -117,13 +160,22 @@ kbd {
   border-radius: 4px;
 }
 
-.overlay.hidden {
-  display: none;
+.hidden {
+  display: none !important;
 }
 
 .overlay.game-over {
-  background: #0f0f17;
+  background: var(--bg-body);
   backdrop-filter: none;
+}
+
+/* El overlay de pausa reutiliza este mismo nodo (#overlay) sin la clase
+   .game-over; ocultamos ahi el contenido de records para que una pausa
+   normal no exponga la tabla ni el boton de reset. */
+#overlay:not(.game-over) .records-section,
+#overlay:not(.game-over) #save-record-section,
+#overlay:not(.game-over) #overlay-reset-btn {
+  display: none;
 }
 
 .overlay-box {
@@ -132,6 +184,11 @@ kbd {
   flex-direction: column;
   gap: 12px;
   align-items: center;
+  width: 300px;
+  max-width: 90vw;
+  max-height: 90%;
+  overflow-y: auto;
+  padding: 16px 8px;
 }
 
 #overlay-title {
@@ -147,7 +204,15 @@ kbd {
   color: #7aa2f7;
 }
 
-#restart-btn {
+.overlay-heading {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  color: #7aa2f7;
+}
+
+/* ---- Botones ---- */
+.btn-primary {
   margin-top: 8px;
   background: #7aa2f7;
   color: #0f0f17;
@@ -161,6 +226,211 @@ kbd {
   transition: background 0.15s;
 }
 
-#restart-btn:hover {
+.btn-primary:hover {
   background: #9bbdff;
+}
+
+.btn-primary.btn-small {
+  padding: 8px 20px;
+  font-size: 13px;
+  margin-top: 0;
+}
+
+.btn-secondary {
+  margin-top: 2px;
+  background: transparent;
+  color: #666680;
+  border: 1px solid #3a3a5a;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.btn-secondary:hover {
+  color: #e57373;
+  border-color: #e57373;
+}
+
+/* ---- Records ---- */
+.records-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+/* ---- Menú de pausa ---- */
+.pause-box {
+  min-width: 220px;
+}
+
+.pause-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+}
+
+.pause-view.hidden {
+  display: none;
+}
+
+.pause-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #7aa2f7;
+}
+
+.pause-level-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+}
+
+.records-table th {
+  color: #555570;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-align: left;
+  padding: 4px 6px;
+  border-bottom: 1px solid #2a2a3a;
+}
+
+.records-table td {
+  color: #ccc;
+  padding: 4px 6px;
+  border-bottom: 1px solid #1e1e2a;
+  text-align: left;
+}
+
+.records-table tr.record-new td {
+  color: #7aa2f7;
+  font-weight: 700;
+  background: rgba(122, 162, 247, 0.12);
+}
+
+.records-empty {
+  font-size: 12px;
+  color: #555570;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.stats-row {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ---- Guardar record ---- */
+.save-record {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+  width: 100%;
+}
+
+#name-input {
+  background: #1a1a25;
+  border: 1px solid #3a3a5a;
+  border-radius: 4px;
+  padding: 8px 10px;
+  color: #e0e0e0;
+  font-size: 13px;
+  text-align: center;
+  width: 180px;
+}
+
+#name-input:focus {
+  outline: none;
+  border-color: #7aa2f7;
+}
+
+.pause-level-select label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #555570;
+  font-weight: 600;
+}
+
+.pause-level-select input[type="range"] {
+  width: 160px;
+  accent-color: #7aa2f7;
+}
+
+#start-level-value {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: #7aa2f7;
+}
+
+.pause-btn {
+  width: 180px;
+  background: #7aa2f7;
+  color: #0f0f17;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.pause-btn:hover {
+  background: #9bbdff;
+}
+
+.pause-btn.secondary {
+  background: transparent;
+  border: 1px solid #3a3a5a;
+  color: #aaa;
+}
+
+.pause-btn.secondary:hover {
+  background: #22223a;
+  color: #e0e0e0;
+}
+
+.pause-controls-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.pause-controls-list li {
+  font-size: 13px;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
