@@ -5,7 +5,10 @@
 }
 
 body {
-  background: #0f0f17;
+  --bg-body: #0f0f17;
+  --bg-board: #1a1a25;
+  --border-board: #2a2a3a;
+  background: var(--bg-body);
   color: #e0e0e0;
   font-family: system-ui, -apple-system, sans-serif;
   display: flex;
@@ -13,6 +16,26 @@ body {
   justify-content: center;
   min-height: 100vh;
   user-select: none;
+  transition: background 0.2s;
+}
+
+/* ---- Temas ---- */
+body.theme-neon {
+  --bg-body: #000000;
+  --bg-board: #05050a;
+  --border-board: #00e5ff;
+}
+
+body.theme-pastel {
+  --bg-body: #1f1a24;
+  --bg-board: #26202c;
+  --border-board: #4a3f52;
+}
+
+body.theme-pixel {
+  --bg-body: #14141c;
+  --bg-board: #1c1c14;
+  --border-board: #3a3a2a;
 }
 
 .wrapper {
@@ -36,10 +59,11 @@ body {
 
 #board {
   display: block;
-  border: 1px solid #2a2a3a;
-  background: #1a1a25;
+  border: 1px solid var(--border-board);
+  background: var(--bg-board);
   border-radius: 4px;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+  transition: border-color 0.2s, background 0.2s;
 }
 
 /* ---- Panel lateral ---- */
@@ -74,9 +98,28 @@ body {
 
 #next-canvas {
   display: block;
-  border: 1px solid #2a2a3a;
-  background: #1a1a25;
+  border: 1px solid var(--border-board);
+  background: var(--bg-board);
   border-radius: 4px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+/* ---- Selector de tema ---- */
+#theme-select {
+  background: #22223a;
+  color: #e0e0e0;
+  border: 1px solid #3a3a5a;
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+#theme-select:hover,
+#theme-select:focus {
+  border-color: #7aa2f7;
+  outline: none;
 }
 
 /* ---- Controles ---- */
@@ -122,7 +165,7 @@ kbd {
 }
 
 .overlay.game-over {
-  background: #0f0f17;
+  background: var(--bg-body);
   backdrop-filter: none;
 }
 
