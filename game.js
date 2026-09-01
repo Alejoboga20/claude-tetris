@@ -52,7 +52,7 @@ const startLevelValue = document.getElementById('start-level-value');
 
 const START_LEVEL_KEY = 'tetris.startLevel';
 
-let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
+let board, current, next, score, lines, level, startLevel, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
@@ -118,7 +118,7 @@ function clearLines() {
   if (cleared) {
     lines += cleared;
     score += (LINE_SCORES[cleared] || 0) * level;
-    level = Math.floor(lines / 10) + 1;
+    level = Math.max(startLevel, Math.floor(lines / 10) + 1);
     dropInterval = Math.max(100, 1000 - (level - 1) * 90);
     updateHUD();
   }
@@ -242,8 +242,24 @@ function endGame() {
   overlay.classList.remove('hidden');
 }
 
+function safeGetItem(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function safeSetItem(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Storage unavailable (private browsing, file:// origin, quota, etc.) — ignore.
+  }
+}
+
 function getStoredStartLevel() {
-  const raw = localStorage.getItem(START_LEVEL_KEY);
+  const raw = safeGetItem(START_LEVEL_KEY);
   const n = parseInt(raw, 10);
   if (!Number.isFinite(n) || n < 1 || n > 10) return 1;
   return n;
@@ -289,7 +305,8 @@ function init() {
   board = createBoard();
   score = 0;
   lines = 0;
-  level = getStoredStartLevel();
+  startLevel = getStoredStartLevel();
+  level = startLevel;
   paused = false;
   gameOver = false;
   dropInterval = Math.max(100, 1000 - (level - 1) * 90);
@@ -345,7 +362,7 @@ startLevelRange.value = getStoredStartLevel();
 startLevelValue.textContent = startLevelRange.value;
 startLevelRange.addEventListener('input', () => {
   startLevelValue.textContent = startLevelRange.value;
-  localStorage.setItem(START_LEVEL_KEY, startLevelRange.value);
+  safeSetItem(START_LEVEL_KEY, startLevelRange.value);
 });
 
 init();
