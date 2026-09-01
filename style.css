@@ -117,13 +117,22 @@ kbd {
   border-radius: 4px;
 }
 
-.overlay.hidden {
-  display: none;
+.hidden {
+  display: none !important;
 }
 
 .overlay.game-over {
   background: #0f0f17;
   backdrop-filter: none;
+}
+
+/* El overlay de pausa reutiliza este mismo nodo (#overlay) sin la clase
+   .game-over; ocultamos ahi el contenido de records para que una pausa
+   normal no exponga la tabla ni el boton de reset. */
+#overlay:not(.game-over) .records-section,
+#overlay:not(.game-over) #save-record-section,
+#overlay:not(.game-over) #overlay-reset-btn {
+  display: none;
 }
 
 .overlay-box {
@@ -132,6 +141,11 @@ kbd {
   flex-direction: column;
   gap: 12px;
   align-items: center;
+  width: 300px;
+  max-width: 90vw;
+  max-height: 90%;
+  overflow-y: auto;
+  padding: 16px 8px;
 }
 
 #overlay-title {
@@ -147,7 +161,15 @@ kbd {
   color: #7aa2f7;
 }
 
-#restart-btn {
+.overlay-heading {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  color: #7aa2f7;
+}
+
+/* ---- Botones ---- */
+.btn-primary {
   margin-top: 8px;
   background: #7aa2f7;
   color: #0f0f17;
@@ -161,6 +183,114 @@ kbd {
   transition: background 0.15s;
 }
 
-#restart-btn:hover {
+.btn-primary:hover {
   background: #9bbdff;
+}
+
+.btn-primary.btn-small {
+  padding: 8px 20px;
+  font-size: 13px;
+  margin-top: 0;
+}
+
+.btn-secondary {
+  margin-top: 2px;
+  background: transparent;
+  color: #666680;
+  border: 1px solid #3a3a5a;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.btn-secondary:hover {
+  color: #e57373;
+  border-color: #e57373;
+}
+
+/* ---- Records ---- */
+.records-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+}
+
+.records-table th {
+  color: #555570;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-align: left;
+  padding: 4px 6px;
+  border-bottom: 1px solid #2a2a3a;
+}
+
+.records-table td {
+  color: #ccc;
+  padding: 4px 6px;
+  border-bottom: 1px solid #1e1e2a;
+  text-align: left;
+}
+
+.records-table tr.record-new td {
+  color: #7aa2f7;
+  font-weight: 700;
+  background: rgba(122, 162, 247, 0.12);
+}
+
+.records-empty {
+  font-size: 12px;
+  color: #555570;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.stats-row {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ---- Guardar record ---- */
+.save-record {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+  width: 100%;
+}
+
+#name-input {
+  background: #1a1a25;
+  border: 1px solid #3a3a5a;
+  border-radius: 4px;
+  padding: 8px 10px;
+  color: #e0e0e0;
+  font-size: 13px;
+  text-align: center;
+  width: 180px;
+}
+
+#name-input:focus {
+  outline: none;
+  border-color: #7aa2f7;
 }
